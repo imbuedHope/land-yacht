@@ -6,19 +6,19 @@
 
 int main(int argc, char *argv[])
 {
-    pthread_t server_thread;
+	pthread_t server_thread;
 
-    if(pthread_create(&server_thread, NULL, (void *) &comm_thread, (void *) 0))
-    {
-        fprintf(stderr, "Error creating thread\n");
-        return 1;
-    }
+	if(pthread_create(&server_thread, NULL, (void *) &comm_thread, (void *) 0))
+	{
+		fprintf(stderr, "Error creating thread\n");
+		return 1;
+	}
 
-    if(pthread_join(server_thread, NULL))
-    {
-        fprintf(stderr, "Error joining thread\n");
-        return 2;
-    }
+	if(pthread_join(server_thread, NULL))
+	{
+		fprintf(stderr, "Error joining thread\n");
+		return 2;
+	}
 
-    return 0;
+	return 0;
 }
