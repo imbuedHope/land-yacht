@@ -11,6 +11,18 @@
 
 #include "comms.h"
 
+//======================================================================
+
+/* A simple server in the internet domain using TCP */
+static int server(int);
+
+/* A simple I/O manage function
+ * Returns 0 when one message is handled
+ * Returns non 0 when message is handled & need to quit / error */
+static int manage_server(int, char*);
+
+//======================================================================
+
 void comm_thread(void* argv)
 {
     // ignore all inputs
@@ -23,8 +35,10 @@ void comm_thread(void* argv)
 
 static int manage_server(int sockfd, char* buffer)
 {
-    bzero(buffer,256);
-    n = read(newsockfd,buffer,255);
+    int n;
+
+    memset(buffer, '\0', 256);
+    n = read(sockfd,buffer,255);
 
     if (n < 0)
     {
@@ -36,7 +50,7 @@ static int manage_server(int sockfd, char* buffer)
     printf(">    %s\n",buffer);
 
     // respond with ack, inv, etc. 
-    n = write(newsockfd, "ack", 3);
+    n = write(sockfd, "ack", 3);
 
     if (n < 0)
     {
@@ -53,11 +67,10 @@ static int manage_server(int sockfd, char* buffer)
 
 static int server(int portno)
 {
-    int sockfd, newsockfd, portno;
+    int sockfd, newsockfd;
     socklen_t clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
-    int n;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
@@ -66,7 +79,7 @@ static int server(int portno)
         return -1;
     }
 
-    bzero((char *) &serv_addr, sizeof(serv_addr));
+    memset((char *) &serv_addr, 0, sizeof(serv_addr));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
