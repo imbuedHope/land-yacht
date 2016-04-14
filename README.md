@@ -35,5 +35,6 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
 	```bash
 	##Disable HDMI, enable PWM P9_22
 	optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN capemgr.enable_partno=am33xx_pwm,bone_pwm_P9_22
+	```
 
 1. Change the `capemgr.enable/disable_partno` to the overlays you'd like to enable or disable.
