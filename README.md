@@ -22,3 +22,18 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
     ```
 
 1. Now the Beaglebone is set up to easily add device tree overlays.
+1. f you want to auto disable/enable device tree overlays on boot, run these commands as root:
+
+    ```bash
+    mkdir /mnt/boot
+    mount /dev/mmcblk0p1 /mnt/boot
+    vim /mnt/boot/uEnv.txt
+    ```
+
+1. Add these lines above the `mmcargs` line:
+
+	```bash
+	##Disable HDMI, enable PWM P9_22
+	optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN capemgr.enable_partno=am33xx_pwm,bone_pwm_P9_22
+
+1. Change the `capemgr.enable/disable_partno` to the overlays you'd like to enable or disable.
