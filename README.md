@@ -1,4 +1,7 @@
-#Setting up the BeagleBone Black
+##Connecting to the BeagleBone Black
+A script `connect-ssh` has been configured to connect to the BeagleBone using its ethernet adapter MAC address. Run `./connect-ssh <user>` to use the script.
+
+##Setting up the BeagleBone Black
 
 1. Install Debian 7.9 image to SD card.
 1. Set device IP to static (currently 192.168.0.5).
