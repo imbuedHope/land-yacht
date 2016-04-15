@@ -4,3 +4,4 @@
 Thumbs.db
 .Xauthority
 resources/exploring-beaglebone.pdf
+src/exploringBBlibrary/build/*
