@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <unistd.h> //for usleep
-#include "pwm/PWM.h"
+#include "gpio/PWM.h"
 using namespace exploringBB;
 using namespace std;
 
