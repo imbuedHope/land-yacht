@@ -40,4 +40,4 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
 1. Change the `capemgr.enable/disable_partno` to the overlays you'd like to enable or disable.
 1. To use the Exploring BeagleBone library, there are a few steps needed.
 	1. You will need to have `cmake` installed, which may or may not be in the repositories. I had to build it from source.
-	1. You will need to run `sudo make install` in the `exploringBBlibrary/build` folder. Note that I already did the work of getting the `Makefile` set up, but if you're running into trouble look at "https://github.com/derekmolloy/exploringBB/tree/master/library".
+	1. You will need to run `cmake .. && make && sudo make install` in the `exploringBBlibrary/build` folder. If you're running into trouble look at "https://github.com/derekmolloy/exploringBB/tree/master/library".
