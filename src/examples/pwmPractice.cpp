@@ -10,6 +10,21 @@
 using namespace exploringBB;
 using namespace std;
 
+// 570000 ns = ~-90 degrees
+// 1460000 ns = ~0 degrees
+// 2350000 ns = ~90 degrees
+
 int main(){
+   PWM pwm("pwm_test_P9_22.15");
+   pwm.setPeriod(20000000); // 20 ms
+   pwm.setDutyCycle(570000); // 0.57 ms
+   pwm.setPolarity(PWM.ACTIVE_HIGH);
+   pwm.run();
+   while(true) {
+      for(int i = 570; i < 2350; i++) {
+         pwm.setDutyCycle(i*1000l);
+         usleep(50000); // 50 ms
+      }
+   }
    return 0;
 }
