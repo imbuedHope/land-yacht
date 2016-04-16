@@ -37,29 +37,29 @@ static int manage_server(int sockfd, char* buffer)
 {
 	int n;
 
-	memset(buffer, '\0', 256);
+	memset(buffer, 0, 256);
 	n = read(sockfd,buffer,255);
 
 	if (n < 0)
 	{
-		perror("Error reading from socket");
+		printf("Error reading from socket");
 		return -1;
 	}
 
 // handle input from client
-	printf(">    %s\n",buffer);
+	printf("> %s",buffer);
 
 // respond with ack, inv, etc. 
 	n = write(sockfd, "ack", 3);
 
 	if (n < 0)
 	{
-		perror("Error writing to socket");
+		printf("Error writing to socket");
 		return -1;
 	}
 
 //TODO: Replace "ext" with a more value
-	if(strcmp(buffer, "ext") != 0)
+	if(strcmp(buffer, "ext") == 0)
 		return 0;
 	else
 		return 1;
@@ -75,7 +75,7 @@ static int server(int portno)
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0)
 	{
-		perror("Error opening socket");
+		printf("Error opening socket");
 		return -1;
 	}
 
@@ -87,7 +87,7 @@ static int server(int portno)
 
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 	{
-		perror("Error on binding - port may be in use");
+		printf("Error on binding - port may be in use");
 		return -1;
 	}
 
@@ -99,12 +99,12 @@ static int server(int portno)
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0)
 	{
-		perror("Error on accept");
+		printf("Error on accept");
 		return -1;
 	}
 
 // NOTE: could fork right here to allow for multiple client connections
-	while(manage_server(newsockfd, buffer) == 0);
+	while(manage_server(newsockfd, buffer));
 	close(newsockfd);
 
 	close(sockfd);
