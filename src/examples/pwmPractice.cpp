@@ -16,13 +16,19 @@ using namespace std;
 
 int main(){
    PWM pwm("pwm_test_P9_22.11");
+   PWM pwm2("pwm_test_P9_16.12"); // this needs to be calibrated
    pwm.setPeriod(20000000); // 20 ms
    pwm.setDutyCycle(570000u); // 0.57 ms
    pwm.setPolarity(PWM::ACTIVE_HIGH);
    pwm.run();
+   pwm2.setPeriod(20000000); // 20 ms
+   pwm2.setDutyCycle(570000u); // 0.57 ms
+   pwm2.setPolarity(PWM::ACTIVE_HIGH);
+   pwm2.run();
    while(true) {
       for(unsigned int i = 57; i < 235; i++) {
          pwm.setDutyCycle(i*10000u);
+         pwm2.setDutyCycle(2350000u - i*10000u);
          usleep(50000); // 50 ms
       }
    }
