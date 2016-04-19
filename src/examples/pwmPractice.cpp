@@ -15,14 +15,14 @@ using namespace std;
 // 2350000 ns = ~90 degrees
 
 int main(){
-   PWM pwm("pwm_test_P9_22.15");
+   PWM pwm("pwm_test_P9_22.11");
    pwm.setPeriod(20000000); // 20 ms
-   pwm.setDutyCycle(570000); // 0.57 ms
-   pwm.setPolarity(PWM.ACTIVE_HIGH);
+   pwm.setDutyCycle(570000u); // 0.57 ms
+   pwm.setPolarity(PWM::ACTIVE_HIGH);
    pwm.run();
    while(true) {
-      for(int i = 570; i < 2350; i++) {
-         pwm.setDutyCycle(i*1000l);
+      for(unsigned int i = 57; i < 235; i++) {
+         pwm.setDutyCycle(i*10000u);
          usleep(50000); // 50 ms
       }
    }
