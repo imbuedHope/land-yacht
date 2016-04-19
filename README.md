@@ -41,3 +41,25 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
 1. To use the Exploring BeagleBone library, there are a few steps needed.
 	1. You will need to have `cmake` installed, which may or may not be in the repositories. I had to build it from source.
 	1. You will need to run `cmake .. && make && sudo make install` in the `exploringBBlibrary/build` folder. If you're running into trouble look at "https://github.com/derekmolloy/exploringBB/tree/master/library".
+
+## Examples
+
+1. To enable PWM P9_22 and P9_16 on boot
+
+    ```bash
+    optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN capemgr.enable_partno=am33xx_pwm,bone_pwm_P9_22,bone_pwm_P9_16
+    ```
+
+1. To enable eQEP2b (encoder support) on boot
+
+    ```bash
+    add CAPE=PyBBIO-eqep2b to /etc/default/capemgr
+    ```
+
+1. The eQEP2b position can be accessed from
+
+    ```bash
+    /sys/devices/ocp.3/48304000.epwmss/48304180.eqep/position
+    ```
+
+    and it appears as if the every 360^o is 4100 counts.
