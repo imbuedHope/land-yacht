@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include "comms.h"
 
 int main(int argc, char *argv[])
 {
+
+    signal(SIGPIPE, SIG_IGN); 
+    
 	pthread_t server_thread;
 
 	if(pthread_create(&server_thread, NULL, (void *) &comm_thread, (void *) 0))

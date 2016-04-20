@@ -60,9 +60,9 @@ static int manage_server(int sockfd, char* buffer)
 
 //TODO: Replace "ext" with a more value
 	if(strcmp(buffer, "ext") == 0)
-		return 0;
+		return -1;
 	else
-		return 1;
+		return 0;
 }
 
 static int server(int portno)
@@ -104,7 +104,7 @@ static int server(int portno)
 	}
 
 // NOTE: could fork right here to allow for multiple client connections
-	while(manage_server(newsockfd, buffer));
+	while(manage_server(newsockfd, buffer) == 0);
 	close(newsockfd);
 
 	close(sockfd);
