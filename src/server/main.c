@@ -8,8 +8,8 @@
 int main(int argc, char *argv[])
 {
 
-    signal(SIGPIPE, SIG_IGN); 
-    
+	signal(SIGPIPE, SIG_IGN); 
+	
 	pthread_t server_thread;
 
 	if(pthread_create(&server_thread, NULL, (void *) &comm_thread, (void *) 0))
