@@ -14,7 +14,7 @@ namespace landYacht {
 	}
 
 	float Encoder::getAngle() {
-		return ((float) getPosition()) / ENC_COUNT;
+		return (getPosition() % ENC_COUNT) * 360.0 / ENC_COUNT;
 	}
 
 	int Encoder::enable() {

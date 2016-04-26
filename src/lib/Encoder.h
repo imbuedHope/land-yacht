@@ -10,12 +10,7 @@ using std::string;
 
 namespace landYacht {
 
-/**
- * @class PWM
- * @brief A class to control a basic PWM output -- you must know the exact sysfs filename
- * for the PWM output.
- */
-class PWM {
+class Encoder {
 
 private:
 	string name, path;
@@ -25,8 +20,8 @@ public:
 
 	virtual unsigned int getPosition();
 	virtual float getAngle();
-	virtual unsigned int enable();
-	virtual unsigned int disable();
+	virtual int enable();
+	virtual int disable();
 
 	virtual ~Encoder();
 };

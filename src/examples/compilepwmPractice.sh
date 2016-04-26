@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ pwmPractice.cpp ../exploringBBlibrary/libEBBLibrary.so -o pwmPractice -I ../exploringBBlibrary/
+g++ pwmPractice.cpp ../lib/PWM.cpp ../lib/util.cpp -I ../lib/ -o pwmPractice

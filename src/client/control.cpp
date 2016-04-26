@@ -1,18 +1,15 @@
-/* A Simple GPIO application
-* Written by Derek Molloy for the book "Exploring BeagleBone: Tools and 
-* Techniques for Building with Embedded Linux" by John Wiley & Sons, 2014
-* ISBN 9781118935125. Please see the file README.md in the repository root 
-* directory for copyright and GNU GPLv3 license information.            */
-
 #include <iostream>
 #include <unistd.h> //for usleep
 #include "PWM.h"
+#include "Encoder.h"
 using namespace landYacht;
 using namespace std;
 
 // 570000 ns = ~-90 degrees
 // 1460000 ns = ~0 degrees
 // 2350000 ns = ~90 degrees
+
+// encoder default folder is 48304180.eqep/
 
 int main(){
    PWM pwm("pwm_test_P9_22.11");
@@ -25,12 +22,18 @@ int main(){
    pwm2.setDutyCycle(570000u); // 0.57 ms
    pwm2.setPolarity(PWM::ACTIVE_HIGH);
    pwm2.run();
+   Encoder enc("48304180.eqep");
+   enc.enable();
    while(true) {
       for(unsigned int i = 57; i < 235; i++) {
          pwm.setDutyCycle(i*10000u);
          pwm2.setDutyCycle(2350000u - i*10000u);
+         unsigned int position = enc.getPosition();
+         float angle = enc.getAngle();
+         cout << "Position: " << position << ", Angle: " << angle << "\n";
          usleep(50000); // 50 ms
       }
    }
    return 0;
 }
+
