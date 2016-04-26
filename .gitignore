@@ -2,6 +2,7 @@
 .profile
 .viminfo
 .vim
+.gitconfig
 Thumbs.db
 .Xauthority
 resources/exploring-beaglebone.pdf

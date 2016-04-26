@@ -1,5 +1,6 @@
 #include <iostream>
-#include <unistd.h> //for usleep
+#include <unistd.h> // for usleep
+#include <signal.h> // for SIGINT
 #include "PWM.h"
 #include "Encoder.h"
 using namespace landYacht;
@@ -11,9 +12,23 @@ using namespace std;
 
 // encoder default folder is 48304180.eqep/
 
-int main(){
-   PWM pwm("pwm_test_P9_22.11");
-   PWM pwm2("pwm_test_P9_16.12"); // this needs to be calibrated
+volatile bool STOP = false;
+PWM pwm("pwm_test_P9_22.11");
+PWM pwm2("pwm_test_P9_16.12"); // this needs to be calibrated
+Encoder enc("48304180.eqep");
+
+void clean_up(int sig) {
+   pwm.stop();
+   pwm2.stop();
+   enc.disable();
+   cout << "Exiting...\n";
+   STOP = true;
+}
+
+int main(void){
+
+   signal(SIGINT, clean_up);
+
    pwm.setPeriod(20000000); // 20 ms
    pwm.setDutyCycle(570000u); // 0.57 ms
    pwm.setPolarity(PWM::ACTIVE_HIGH);
@@ -22,7 +37,6 @@ int main(){
    pwm2.setDutyCycle(570000u); // 0.57 ms
    pwm2.setPolarity(PWM::ACTIVE_HIGH);
    pwm2.run();
-   Encoder enc("48304180.eqep");
    enc.enable();
    while(true) {
       for(unsigned int i = 57; i < 235; i++) {
@@ -32,7 +46,9 @@ int main(){
          float angle = enc.getAngle();
          cout << "Position: " << position << ", Angle: " << angle << "\n";
          usleep(50000); // 50 ms
+         if(STOP) break;
       }
+      if(STOP) break;
    }
    return 0;
 }
