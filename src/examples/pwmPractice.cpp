@@ -6,8 +6,8 @@
 
 #include <iostream>
 #include <unistd.h> //for usleep
-#include "gpio/PWM.h"
-using namespace exploringBB;
+#include "../lib/PWM.h"
+using namespace landYacht;
 using namespace std;
 
 // 570000 ns = ~-90 degrees
