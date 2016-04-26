@@ -62,4 +62,4 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
     /sys/devices/ocp.3/48304000.epwmss/48304180.eqep/position
     ```
 
-    and it appears as if the every 360^o is 4100 counts.
+    and it appears as if the every 360<sup>o</sup> is 4100 counts.
