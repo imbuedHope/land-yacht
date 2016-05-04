@@ -28,8 +28,6 @@ void comm_thread(void* argv)
 // ignore all inputs
 // argv present only to satisfy casting
 
-// for now, once an exit message is recieved
-// the server stops doing anything at all
 	server( PORT_NO );
 }
 
@@ -42,7 +40,7 @@ static int manage_server(int sockfd, char* buffer)
 
 	if (n < 0)
 	{
-		printf("Error reading from socket");
+		printf("Error reading from socket\n");
 		return -1;
 	}
 
@@ -54,9 +52,11 @@ static int manage_server(int sockfd, char* buffer)
 
 	if (n < 0)
 	{
-		printf("Error writing to socket");
+		printf("Error writing to socket -- client probably closed\n");
 		return -1;
 	}
+
+//TODO: Message handling somewhere around here in this function
 
 //TODO: Replace "ext" with a more value
 	if(strcmp(buffer, "ext") == 0)
@@ -75,7 +75,7 @@ static int server(int portno)
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0)
 	{
-		printf("Error opening socket");
+		printf("Error opening socket\n");
 		return -1;
 	}
 
@@ -87,25 +87,30 @@ static int server(int portno)
 
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 	{
-		printf("Error on binding - port may be in use");
+		printf("Error on binding - port may be in use\n");
 		return -1;
 	}
 
 	listen(sockfd,5);
 	clilen = sizeof(cli_addr);
 
-// TODO: keep finding clients until sig term is called
-// TODO: consider security here?
-	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-	if (newsockfd < 0)
+	while(1)
 	{
-		printf("Error on accept");
-		return -1;
-	}
+		printf("wating for new connection");
+// TODO: consider security here?
+		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+		if (newsockfd < 0)
+		{
+			printf("Error on accept\n");
+			return -1;
+		}
 
 // NOTE: could fork right here to allow for multiple client connections
-	while(manage_server(newsockfd, buffer) == 0);
-	close(newsockfd);
+		while(manage_server(newsockfd, buffer) == 0);
+		close(newsockfd);
+
+		printf("closed connection");
+	}
 
 	close(sockfd);
 	return 0; 
