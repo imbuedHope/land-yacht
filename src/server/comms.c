@@ -35,34 +35,53 @@ static int manage_server(int sockfd, char* buffer)
 {
 	int n;
 
-	memset(buffer, 0, 256);
-	n = read(sockfd,buffer,255);
-
-	if (n < 0)
+	while(1)
 	{
-		printf("Error reading from socket\n");
-		return -1;
+
+		memset(buffer, 0, 256);
+		n = read(sockfd,buffer,255);
+
+		if (n < 0)
+		{
+			printf("Error reading from socket\n");
+			return -1;
+		}
+
+		printf("client> %s",buffer);
+
+		if (n < 0)
+		{
+			printf("> client left the connection, closing connection\n");
+			return -1;
+		}
+
+		// Parse message from client here
+		if(strncmp(buffer, "exit", 4) == 0)
+		{
+			// close client connection
+			return 0;
+		}
+
+		if(strncmp(buffer, "halt", 4) == 0) 
+		{
+			// shutdown the server application
+			return 0;
+		}
+
+		if(strncmp(buffer, "set_val", 7) == 0)
+		{
+			// set value in data buffer
+			continue;
+		}
+
+		if(strncmp(buffer, "poll", 4) == 0)
+		{
+			// dump values in data buffer
+
+			continue;
+		}
+
 	}
-
-// handle input from client
-	printf("> %s",buffer);
-
-// respond with ack, inv, etc. 
-	n = write(sockfd, "ack", 3);
-
-	if (n < 0)
-	{
-		printf("Error writing to socket -- client probably closed\n");
-		return -1;
-	}
-
-//TODO: Message handling somewhere around here in this function
-
-//TODO: Replace "ext" with a more value
-	if(strcmp(buffer, "ext") == 0)
-		return -1;
-	else
-		return 0;
 }
 
 static int server(int portno)
@@ -75,7 +94,7 @@ static int server(int portno)
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0)
 	{
-		printf("Error opening socket\n");
+		printf("> error opening socket\n");
 		return -1;
 	}
 
@@ -87,7 +106,7 @@ static int server(int portno)
 
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 	{
-		printf("Error on binding - port may be in use\n");
+		printf("> error on binding - port may be in use\n");
 		return -1;
 	}
 
@@ -96,20 +115,20 @@ static int server(int portno)
 
 	while(1)
 	{
-		printf("wating for new connection");
-// TODO: consider security here?
+		printf("> wating for client new connection\n");
+// TODO: consider security here? Clients have a lot of power...
 		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0)
 		{
-			printf("Error on accept\n");
+			printf("> error on accept\n");
 			return -1;
 		}
 
 // NOTE: could fork right here to allow for multiple client connections
-		while(manage_server(newsockfd, buffer) == 0);
+		manage_server(newsockfd, buffer);
 		close(newsockfd);
 
-		printf("closed connection");
+		printf("> closed connection");
 	}
 
 	close(sockfd);
