@@ -1,3 +1,13 @@
+##Current Project Status
+
+CAD models for the project can be found at https://grabcad.com/library/land-yacht-2/ . Components are mounted, and PWM and encoder control are working. Needs to be done:
+
+1. Get WiFi adapter working. Right now if you `ifup wlan0` with the current `/etc/network/interfaces` and `/etc/wpa_supplicant/wpa_supplicant.conf` settings, you will connect to `planets`, but it is not working straight from boot.
+1. Confirm server-client communication is working - fold in Sriram's work.
+1. Write some controllers!
+1. Get GPS working with the SPI pins on the BeagleBone (I think it's SPI?).
+1. Download Exploring BeagleBone book if you want to learn more.
+
 ##Connecting to the BeagleBone Black
 A script `connect-ssh` has been configured to connect to the BeagleBone using its ethernet adapter MAC address. Run `./connect-ssh <user>` to use the script.
 
