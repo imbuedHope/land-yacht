@@ -1,6 +1,6 @@
 ##Current Project Status
 
-CAD models for the project can be found at https://grabcad.com/library/land-yacht-2/ . Components are mounted, and PWM and encoder control are working. Needs to be done:
+CAD models for the project can be found at https://grabcad.com/library/land-yacht-2015-1/ . Components are mounted, and PWM and encoder control are working. Needs to be done:
 
 1. Get WiFi adapter working. Right now if you `ifup wlan0` with the current `/etc/network/interfaces` and `/etc/wpa_supplicant/wpa_supplicant.conf` settings, you will connect to `planets`, but it is not working straight from boot.
 1. Confirm server-client communication is working - fold in Sriram's work.
