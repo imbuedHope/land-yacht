@@ -23,6 +23,7 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
     export SLOTS=/sys/devices/bone_capemgr.9/slots
     export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
     ```
+    This will allow you to access $SLOTS and $PINS easily, files that are used to manipulate device tree overlays and pin status. You can read about how to use these in the Exploring BeagleBone book.
 
 1. Run `visudo` as root, under `Defaults	env_reset` add two lines:
 
