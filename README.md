@@ -14,7 +14,7 @@ A script `connect-ssh` has been configured to connect to the BeagleBone using it
 ##Setting up the BeagleBone Black
 
 1. Install Debian 7.9 image to SD card.
-1. Set device IP to static (currently 192.168.0.5).
+1. Set device IP to static (currently 192.168.0.105).
 1. Set up users as shown in `info` file.
 1. `git clone` this repo as hotsail home directory.
 1. Edit `~/.profile`, append:
