@@ -38,14 +38,16 @@ int main(void){
    sail.setPolarity(PWM::ACTIVE_HIGH);
    sail.run();
    vane.enable();
-   time_t end = time(NULL) + 20; // run for 20 seconds
+   // time_t end = time(NULL) + 20; // run for 20 seconds
    unsigned int steerPosition = 1460000u;
-   while (time(NULL) <= end) {
+   // while (time(NULL) <= end) {
+   while(true) {
       sail.setDutyCycle(1905000u);
       float angle = vane.getAngle();
       if(angle <= 85 || angle >= 95) {
+         angle = (int) (angle - 90) % 360;
          if(angle > 180) angle = angle - 360;
-         int proportion = -10 * (90 - angle);
+         int proportion = 50 * angle;
          steerPosition = steerPosition + proportion;
          if(steerPosition <= 1905000u && steerPosition >= 1015000u)
             steer.setDutyCycle(steerPosition);
@@ -55,6 +57,7 @@ int main(void){
             steerPosition = 1015000u;
          cout << "Angle: " << angle << ", Proportion: " << proportion << ", Steer Position: " << steerPosition << endl;
       }
+      if(STOP) break;
       usleep(10000); // 10 ms
    }
 
