@@ -12,6 +12,8 @@
 
 #define BUFFER_LEN 256
 
+int sockfd;
+
 //======================================================================
 
 /* A simple server in the internet domain using TCP */
@@ -131,7 +133,7 @@ static int manage_server(int sockfd, char* buffer)
 
 static int server(int portno)
 {
-	int sockfd, newsockfd;
+	int newsockfd;
 	socklen_t clilen;
 	char buffer[BUFFER_LEN];
 	struct sockaddr_in serv_addr, cli_addr;

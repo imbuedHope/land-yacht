@@ -9,6 +9,9 @@ extern "C"
 #include "server/comn.h"
 }
 #include "server/control.h"
+	
+pthread_t server_thread;
+pthread_t action_thread;
 
 char halt_system = RUN_STATE;
 int comn_dat[COMN_DAT_LEN];
@@ -17,12 +20,8 @@ pthread_mutex_t comn_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char *argv[])
 {
-
 	signal(SIGPIPE, SIG_IGN); 
 	
-	pthread_t server_thread;
-	pthread_t action_thread;
-
 	if(pthread_create(&server_thread, NULL, &comm_thread, (void *) 0))
 	{
 		fprintf(stderr, "> error creating server thread\n");

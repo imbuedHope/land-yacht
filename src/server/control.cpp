@@ -24,20 +24,16 @@ PWM steer("pwm_test_P9_16.12"); // this needs to be calibrated
 Encoder vane("48304180.eqep");
 
 static void clean_up() {
+	// just to be on the safe side...
+	halt_system = HALT_STATE;
+
 	sail.stop();
 	steer.stop();
 	vane.disable();
 	cout << "Exiting...\n";
 }
 
-static void sig_handl(int sig) {
-// on case of interrupt let comm know to crash as well
-	halt_system = HALT_STATE;
-}
-
 void* control_thread(void*) {
-
-	signal(SIGINT, sig_handl);
 
 	steer.setPeriod(20000000); // 20 ms
 	steer.setDutyCycle(570000u); // 0.57 ms
