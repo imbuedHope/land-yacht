@@ -13,8 +13,8 @@ extern "C"
 pthread_t server_thread;
 pthread_t action_thread;
 
-char halt_system = RUN_STATE;
-int comn_dat[COMN_DAT_LEN];
+volatile char halt_system = RUN_STATE;
+volatile int comn_dat[COMN_DAT_LEN];
 
 pthread_mutex_t comn_mutex = PTHREAD_MUTEX_INITIALIZER;
 
