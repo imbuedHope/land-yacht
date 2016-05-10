@@ -1,6 +1,6 @@
 # a magical little Makefile -- here's hoping it works!
 
-CFLAGS = -Wall -std=c99 -pthread
+CFLAGS = -Wall -std=c99 -pthread -g
 CC = gcc
 SERVER_DIR= src/server/
 CLIENT_DIR= src/client/
@@ -11,7 +11,7 @@ server: build_s
 build_s:
 	mkdir build_s/
 	cd $(SERVER_DIR); \
-	gcc -c $(CFLAGS) *.c;
+	gcc -c $(CFLAGS) *.c *.cpp;
 	mv $(SERVER_DIR)*.o build_s/
 
 client: build_c

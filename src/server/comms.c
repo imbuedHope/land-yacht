@@ -5,11 +5,12 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
-
-// might need later... see: https://computing.llnl.gov/tutorials/pthreads/#Management
-// #include <pthread.h>
+#include <pthread.h>
 
 #include "comms.h"
+#include "comn.h"
+
+#define BUFFER_LEN 256
 
 //======================================================================
 
@@ -23,23 +24,25 @@ static int manage_server(int, char*);
 
 //======================================================================
 
-void comm_thread(void* argv)
+void* comm_thread(void* argv)
 {
 // ignore all inputs
 // argv present only to satisfy casting
 
 	server( PORT_NO );
+
+	return (void *) 0;
 }
 
 static int manage_server(int sockfd, char* buffer)
 {
 	int n;
 
-	while(1)
+	while(1 && halt_system == RUN_STATE)
 	{
 
-		memset(buffer, 0, 256);
-		n = read(sockfd,buffer,255);
+		memset(buffer, 0, 255);
+		n = read(sockfd, buffer, BUFFER_LEN);
 
 		if (n < 0)
 		{
@@ -65,30 +68,72 @@ static int manage_server(int sockfd, char* buffer)
 		if(strncmp(buffer, "halt", 4) == 0) 
 		{
 			// shutdown the server application
+			halt_system = HALT_STATE;
 			return 0;
 		}
 
 		if(strncmp(buffer, "set_val", 7) == 0)
 		{
 			// set value in data buffer
+			int k = strlen(buffer);
+			for(int i = 0; i < k; i++)
+				if(buffer[i] == ' ')
+					buffer[i] = '\0';
+
+			int ind = atoi(buffer+8);
+			int val = atoi(buffer+9+strlen(buffer+8));
+
+			if (ind > COMN_DAT_LEN || ind < 0)
+				continue;
+
+			pthread_mutex_lock(&comn_mutex);
+
+			comn_dat[ind] = val;
+
+			pthread_mutex_unlock(&comn_mutex);
 			continue;
 		}
 
 		if(strncmp(buffer, "poll", 4) == 0)
 		{
 			// dump values in data buffer
+			for(int i = 0; i < COMN_DAT_LEN; i++)
+			{
+
+				pthread_mutex_lock(&comn_mutex);
+
+				snprintf(buffer, BUFFER_LEN, "%d: %d\n", i, comn_dat[i]);
+			 	n = write(sockfd, buffer, strlen(buffer));
+
+				pthread_mutex_unlock(&comn_mutex);
+
+				if (n < 0)
+				{
+					perror("Error writing to socket");
+					return -1;
+				}
+			}
 
 			continue;
 		}
 
+		buffer[0] = ' ';
+		buffer[1] = '\0';
+		if ( write(sockfd, buffer, strlen(buffer)) < 0 )
+		{
+			perror("Error writing to socket");
+			return -1;
+		}
 	}
+
+	return -1;
 }
 
 static int server(int portno)
 {
 	int sockfd, newsockfd;
 	socklen_t clilen;
-	char buffer[256];
+	char buffer[BUFFER_LEN];
 	struct sockaddr_in serv_addr, cli_addr;
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -113,7 +158,7 @@ static int server(int portno)
 	listen(sockfd,5);
 	clilen = sizeof(cli_addr);
 
-	while(1)
+	while(halt_system == RUN_STATE)
 	{
 		printf("> wating for client new connection\n");
 // TODO: consider security here? Clients have a lot of power...

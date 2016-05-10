@@ -2,4 +2,4 @@
 
 #define PORT_NO 50000
 
-void comm_thread(void*);
+void* comm_thread(void*);
