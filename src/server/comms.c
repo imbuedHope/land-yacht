@@ -7,8 +7,8 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#include "comms.h"
-#include "comn.h"
+#include "server/comms.h"
+#include "server/comn.h"
 
 #define BUFFER_LEN 256
 
@@ -31,7 +31,7 @@ void* comm_thread(void* argv)
 
 	server( PORT_NO );
 
-	return (void *) 0;
+	return (void*) 0;
 }
 
 static int manage_server(int sockfd, char* buffer)

@@ -22,10 +22,10 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "util.h"
-#include<iostream>
-#include<fstream>
-#include<sstream>
+#include "lib/util.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 namespace landYacht {

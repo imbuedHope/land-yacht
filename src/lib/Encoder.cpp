@@ -1,5 +1,5 @@
-#include "Encoder.h"
-#include "util.h"
+#include "lib/Encoder.h"
+#include "lib/util.h"
 #include <cstdlib>
 
 namespace landYacht {

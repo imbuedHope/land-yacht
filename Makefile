@@ -1,27 +1,38 @@
 # a magical little Makefile -- here's hoping it works!
 
-CFLAGS = -Wall -std=c99 -pthread -g
+CERR = -Wall -Wextra
+CFLAGS = -std=c99 -pthread
+CPPFLAGS = -lstdc++ -pthread 
 CC = gcc
-SERVER_DIR= src/server/
-CLIENT_DIR= src/client/
+SERVER_DIR = src/server/
+CLIENT_DIR = src/client/
+LIB_DIR = src/lib/
 
-server: build_s
-	gcc $(CFLAGS) -o server $(wildcard build_s/*)
+server: build/server build/lib
+	g++ $(CPPFLAGS) -o server $(wildcard build/server/*) $(wildcard build/lib/*)
 
-build_s:
-	mkdir build_s/
+build/server:
+	mkdir -p build/server
 	cd $(SERVER_DIR); \
-	gcc -c $(CFLAGS) *.c *.cpp;
-	mv $(SERVER_DIR)*.o build_s/
+	gcc -c $(CERR) $(CFLAGS) -I .. *.c; \
+	gcc -c $(CERR) $(CPPFLAGS) -I .. *.cpp;
+	mv $(SERVER_DIR)*.o build/server/
 
-client: build_c
-	gcc $(CFLAGS) -o client $(wildcard build_c/*)
+client: build/client
+	gcc $(CFLAGS) -o client $(wildcard build/client/*)
 
-build_c:
-	mkdir build_c/
+build/client:
+	mkdir -p build/client/
 	cd $(CLIENT_DIR); \
-	gcc -c $(CFLAGS) *.c;
-	mv $(CLIENT_DIR)*.o build_c/
+	gcc -c $(CERR) $(CFLAGS) -I .. *.c;
+	mv $(CLIENT_DIR)*.o build/client/
+
+
+build/lib:
+	mkdir -p build/lib/
+	cd $(LIB_DIR); \
+	gcc -c $(CERR) $(CPPFLAGS) -I .. *.cpp;
+	mv $(LIB_DIR)*.o build/lib/
 
 clean:
-	rm -rf build_s/ build_c/ server client
+	rm -rf build/ server client

@@ -22,8 +22,8 @@
  * For more details, see http://www.derekmolloy.ie/
  */
 
-#include "PWM.h"
-#include "util.h"
+#include "lib/PWM.h"
+#include "lib/util.h"
 #include <cstdlib>
 
 namespace landYacht {
