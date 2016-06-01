@@ -1,5 +1,5 @@
-#include "PWM.h"
-#include "Encoder.h"
+#include "lib/PWM.h"
+#include "lib/Encoder.h"
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
