@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h> // for usleep
 #include <signal.h> // for SIGINT
 
@@ -94,7 +96,7 @@ void* control_thread(void*) {
 		steer.run();
 	}	
 
-	if (now >= 500)
+	if (now >= 20000000000)
 	{
 	clean_up();
 
@@ -105,18 +107,7 @@ void* control_thread(void*) {
 void setTunings(double Kp, double Ki, double Kd)
 	{
 		double SampleTimeinSec = ((double)SampleTime)/1000;
-		kp = 1.2 * SampleTimeinSec;
-		ki = 1.1 / SampleTimeinSec;
-		kd = 1.3 / SampleTimeInSec;
+		kp = Kp * SampleTimeinSec;
+		ki = Ki / SampleTimeinSec;
+		kd = Kd / SampleTimeInSec;
 	}	
-
-void SetSampleTime(int NewSampleTime)
-{
-	if (NewSampleTime > 0)
-	{
-		double ratio = (double)NewSampleTime / (double)SampleTime;
-		ki *= ratio;
-		kd /= ratio;
-		SampleTime = (unsigned long)NewSampleTime;
-	}
-}
