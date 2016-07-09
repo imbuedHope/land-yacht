@@ -33,46 +33,90 @@ static void clean_up() {
 	cout << "Exiting...\n";
 }
 
+//Working variables
+unsigned long lastTime;
+double eAngle, steerAngle, SetAngle; //Encoder Angle, Steering Angle (Result), Angle 
+double ITerm, lasteAngle;
+double kp, ki;
+// Time variables
+int timeperdeg, timesteer;
+// Error Variables
+double error, deAngle; 
+int SampleTime = 100; // 0.1 seconds
+
 void* control_thread(void*) {
+	
+	//Set Angle in this case can be 0 or 90 degrees depending on orietation used, as long as wind vane is 90 degrees away from body (perpendicular).
+	SetAngle = 0;
 
-	steer.setPeriod(20000000); // 20 ms
-	steer.setDutyCycle(570000u); // 0.57 ms
-	steer.setPolarity(PWM::ACTIVE_HIGH);
-	steer.run();
-	sail.setPeriod(20000000); // 20 ms
-	sail.setDutyCycle(570000u); // 0.57 ms
-	sail.setPolarity(PWM::ACTIVE_HIGH);
-	sail.run();
-	vane.enable();
-	// time_t end = time(NULL) + 20; // run for 20 seconds
+	//Call Encoder
+	Encoder enc;
+	
+	unsigned long now = millis();
+	int timeChange = (now - lastTime);
 
-	unsigned int steerPosition = 1460000u;
+	if(timeChange >= SampleTime)
+	{
+		//Obtain value for Encoder Angle
+		eAngle = enc.getAngle(); //encoder measures positive CW supposedly
 
-	// runs forver until comm thread stops it
+		//Time per Angle
+		timeperdeg = 570000./90; //Estimation 
 
-	while(halt_system == RUN_STATE) {
-		sail.setDutyCycle(1905000u);
-		float angle = vane.getAngle();
-		if(angle <= 85 || angle >= 95) {
-			angle = (int) (angle - 90) % 360;
-
-			if(angle > 180) angle = angle - 360;
-			int proportion = 50 * angle;
-			steerPosition = steerPosition + proportion;
-			if(steerPosition <= 1905000u && steerPosition >= 1015000u)
-				steer.setDutyCycle(steerPosition);
-			else if(steerPosition > 1905000u)
-				steerPosition = 1905000u;
-			else if(steerPosition < 1015000u)
-				steerPosition = 1015000u;
-
-			cout << "Angle: " << angle << ", Proportion: " << proportion << ", Steer Position: " << steerPosition << endl;
+		if (eAngle >= 0)
+		{
+		// Compute all working error variables
+		error = eAngle - SetAngle; //For Proportional Controller
+		ITerm += (error * ki); ///For Integration Controller
+		double deAngle = (eAngle - lasteAngle);
 		}
+		else //for when eAngle << 0
+		{
+			error = 360 + eAngle; 
+			ITerm += (error * ki);
+			double deAngle = (eAngle -lasteAngle);
+		}
+		
+		//Compute PI Output in Angle form 
+		steerAngle = kp * error + ITerm - kd * deAngle;
 
-	usleep(10000); // 10 ms
-	}
+		//Caculate time for steering to move 
+		timesteer = steerAngle*timeperdeg; //in nanosecs
 
+		//Additional Variables
+		lasteAngle = eAngle;
+		lastTime = now;
+
+		//Time to activate the steering
+		steer.setPeriod(20000000); // 20 ms
+		steer.setDutyCycle(timesteer); // time calculated above
+		steer.setPolarity(PWM::ACTIVE_HIGH);
+		steer.run();
+	}	
+
+	if (now >= 500)
+	{
 	clean_up();
 
 	return (void*) 0;
+	}	
+}
+
+void setTunings(double Kp, double Ki, double Kd)
+	{
+		double SampleTimeinSec = ((double)SampleTime)/1000;
+		kp = 1.2 * SampleTimeinSec;
+		ki = 1.1 / SampleTimeinSec;
+		kd = 1.3 / SampleTimeInSec;
+	}	
+
+void SetSampleTime(int NewSampleTime)
+{
+	if (NewSampleTime > 0)
+	{
+		double ratio = (double)NewSampleTime / (double)SampleTime;
+		ki *= ratio;
+		kd /= ratio;
+		SampleTime = (unsigned long)NewSampleTime;
+	}
 }
