@@ -1,6 +1,4 @@
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h> // for usleep
 #include <signal.h> // for SIGINT
 
@@ -35,6 +33,12 @@ static void clean_up() {
 	cout << "Exiting...\n";
 }
 
+//NOTES
+//Encoder reads Clockwise as positive angle and CCW as negative angle
+//For servos
+//ACTIVE_LOW = CCW
+//ACTIVE_HIGH = CW
+
 //Working variables
 unsigned long lastTime;
 double eAngle, steerAngle, SetAngle; //Encoder Angle, Steering Angle (Result), Angle 
@@ -60,31 +64,29 @@ void* control_thread(void*) {
 	if(timeChange >= SampleTime)
 	{
 		//Obtain value for Encoder Angle
-		eAngle = enc.getAngle(); //encoder measures positive CW supposedly
+		eAngle = enc.getAngle(); //encoder measures positive CW 
 
 		//Time per Angle
 		timeperdeg = 570000./90; //Estimation 
-
-		if (eAngle >= 0)
-		{
+h
 		// Compute all working error variables
-		error = eAngle - SetAngle; //For Proportional Controller
-		ITerm += (error * ki); ///For Integration Controller
-		double deAngle = (eAngle - lasteAngle);
-		}
-		else //for when eAngle << 0
+			error = eAngle - SetAngle; //For Proportional Controller
+			ITerm += (error * ki); ///For Integration Controller
+			double deAngle = (eAngle - lasteAngle);
+
+		//Calculate the output
+			steerAngle = kp * error + ITerm - kd * deAngle;
+
+		if(steerAngle >= 45 || steerAngle <= -45)
 		{
-			error = 360 + eAngle; 
-			ITerm += (error * ki);
-			double deAngle = (eAngle -lasteAngle);
+		timesteer = 45*timeperdeg; 
+		}
+		else
+		{
+		timesteer = abs(steerAngle)*timeperdeg; //Need absolute of angle otherwise
+		//Negative time 
 		}
 		
-		//Compute PI Output in Angle form 
-		steerAngle = kp * error + ITerm - kd * deAngle;
-
-		//Caculate time for steering to move 
-		timesteer = steerAngle*timeperdeg; //in nanosecs
-
 		//Additional Variables
 		lasteAngle = eAngle;
 		lastTime = now;
@@ -92,11 +94,22 @@ void* control_thread(void*) {
 		//Time to activate the steering
 		steer.setPeriod(20000000); // 20 ms
 		steer.setDutyCycle(timesteer); // time calculated above
+		
+		//Set up Direction
+
+		if (steerAngle >= 0)
+		{
 		steer.setPolarity(PWM::ACTIVE_HIGH);
+		}
+		else if(steerAngle < 0)
+		{
+		steer.setPolarity(PWM::ACTIVE_LOW);
+		}
+		
 		steer.run();
 	}	
 
-	if (now >= 20000000000)
+	if (now >= 500)
 	{
 	clean_up();
 
@@ -111,3 +124,15 @@ void setTunings(double Kp, double Ki, double Kd)
 		ki = Ki / SampleTimeinSec;
 		kd = Kd / SampleTimeInSec;
 	}	
+
+void SetSampleTime(int NewSampleTime)
+{
+	if (NewSampleTimek > 0)
+	{
+		double ratio = (double)NewSampleTime / (double)SampleTime;
+		ki *= ratio;
+		kd /= ratio;
+		SampleTime = (unsigned long)NewSampleTime;
+	}
+}
+
