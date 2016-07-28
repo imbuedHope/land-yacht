@@ -68,7 +68,7 @@ void* control_thread(void*) {
 
 		//Time per Angle
 		timeperdeg = 570000./90; //Estimation 
-h
+
 		// Compute all working error variables
 			error = eAngle - SetAngle; //For Proportional Controller
 			ITerm += (error * ki); ///For Integration Controller
