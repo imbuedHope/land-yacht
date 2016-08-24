@@ -33,25 +33,28 @@ static void clean_up() {
 	cout << "Exiting...\n";
 }
 
-//NOTES
-//Encoder reads Clockwise as positive angle and CCW as negative angle
-//For servos
-//ACTIVE_LOW = CCW
-//ACTIVE_HIGH = CW
 
-//Working variables
-unsigned long lastTime;
-double eAngle, steerAngle, SetAngle; //Encoder Angle, Steering Angle (Result), Angle 
-double ITerm, lasteAngle;
-double kp, ki;
-// Time variables
-int timeperdeg, timesteer;
-// Error Variables
-double error, deAngle; 
-int SampleTime = 100; // 0.1 seconds
 
 void* control_thread(void*) {
-	
+
+	//NOTES
+	//Encoder reads Clockwise as positive angle and CCW as negative angle
+	//For servos
+	//ACTIVE_LOW = CCW
+	//ACTIVE_HIGH = CW
+
+	//Working variables
+	unsigned long lastTime;
+	double eAngle, steerAngle, SetAngle; //Encoder Angle, Steering Angle (Result), Angle 
+	double ITerm, lasteAngle;
+	double kp, ki;
+	// Time variables
+	int timeperdeg, timesteer;
+	// Error Variables
+	double error, deAngle; 
+	int SampleTime = 100; // 0.1 seconds
+
+
 	//Set Angle in this case can be 0 or 90 degrees depending on orietation used, as long as wind vane is 90 degrees away from body (perpendicular).
 	SetAngle = 0;
 
