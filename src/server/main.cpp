@@ -20,14 +20,17 @@ pthread_mutex_t comn_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char *argv[])
 {
+	//ignore SIGPIPE signals; this means that the client crashed -- ignoring is fine for now
 	signal(SIGPIPE, SIG_IGN); 
 	
+	// launch thread to handle communication with a client; see: comms.c
 	if(pthread_create(&server_thread, NULL, &comm_thread, (void *) 0))
 	{
 		fprintf(stderr, "> error creating server thread\n");
 		return 1;
 	}
 
+	// launch thread to handle mechnical controls; see: controls.cpp
 	if(pthread_create(&action_thread, NULL, &control_thread, (void *) 0))
 	{
 		fprintf(stderr, "> error creating controls thread\n");
@@ -35,7 +38,7 @@ int main(int argc, char *argv[])
 	}
 
 	// this thread will sleep and the 2 child threads will do the work
-
+	// close threads and end the server process when they end
 	if(pthread_join(server_thread, NULL))
 	{
 		fprintf(stderr, "> error joining server thread\n");
