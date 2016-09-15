@@ -14,8 +14,6 @@
 
 int sockfd;
 
-//======================================================================
-
 /* A simple server in the internet domain using TCP */
 static int server(int);
 
@@ -24,8 +22,7 @@ static int server(int);
 * Returns non 0 when message is handled & need to quit / error */
 static int manage_server(int, char*);
 
-//======================================================================
-
+// wrapper for pthread, see server function for actual handler
 void* comm_thread(void* argv)
 {
 // ignore all inputs
@@ -74,6 +71,8 @@ static int manage_server(int sockfd, char* buffer)
 			return 0;
 		}
 
+		// set a value in the comn_dat array
+		// syntax: set_val ind val
 		if(strncmp(buffer, "set_val", 7) == 0)
 		{
 			// set value in data buffer
@@ -95,7 +94,8 @@ static int manage_server(int sockfd, char* buffer)
 			pthread_mutex_unlock(&comn_mutex);
 			continue;
 		}
-
+		
+		// dump array data onto socket
 		if(strncmp(buffer, "poll", 4) == 0)
 		{
 			// dump values in data buffer
@@ -131,6 +131,7 @@ static int manage_server(int sockfd, char* buffer)
 	return -1;
 }
 
+// initalizle server, wait for client, and handle client
 static int server(int portno)
 {
 	int newsockfd;
@@ -163,7 +164,6 @@ static int server(int portno)
 	while(halt_system == RUN_STATE)
 	{
 		printf("> wating for client new connection\n");
-// TODO: consider security here? Clients have a lot of power...
 		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0)
 		{
@@ -171,7 +171,8 @@ static int server(int portno)
 			return -1;
 		}
 
-// NOTE: could fork right here to allow for multiple client connections
+		// NOTE: could fork right here to allow for multiple client connections
+		// manage_server handles actually parsing messages from the client and is a blocking function
 		manage_server(newsockfd, buffer);
 		close(newsockfd);
 
